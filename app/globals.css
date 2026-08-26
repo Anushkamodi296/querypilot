@@ -1,32 +1,66 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Theme Color Tokens */
 :root {
-  color-scheme: dark;
+  --bg-primary: #090d16;
+  --bg-surface: rgba(17, 24, 39, 0.85);
+  --bg-card: rgba(22, 31, 50, 0.9);
+  --bg-hover: rgba(31, 41, 61, 0.8);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
+  --accent-glow: rgba(59, 130, 246, 0.4);
+  --gradient-brand: linear-gradient(135deg, #3b82f6 0%, #06b6d4 50%, #8b5cf6 100%);
+}
+
+.theme-light {
+  --bg-primary: #f1f5f9;
+  --bg-surface: rgba(255, 255, 255, 0.9);
+  --bg-card: rgba(255, 255, 255, 0.95);
+  --bg-hover: rgba(241, 245, 249, 0.9);
+  --border-color: rgba(0, 0, 0, 0.1);
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --accent-glow: rgba(99, 102, 241, 0.25);
+  --gradient-brand: linear-gradient(135deg, #4f46e5 0%, #0284c7 50%, #0d9488 100%);
+}
+
+.theme-cyberpunk {
+  --bg-primary: #05050e;
+  --bg-surface: rgba(15, 10, 30, 0.85);
+  --bg-card: rgba(24, 14, 46, 0.9);
+  --bg-hover: rgba(40, 20, 75, 0.8);
+  --border-color: rgba(255, 0, 127, 0.25);
+  --text-primary: #00f3ff;
+  --text-secondary: #ff77bc;
+  --accent-glow: rgba(255, 0, 127, 0.5);
+  --gradient-brand: linear-gradient(135deg, #ff007f 0%, #00f3ff 50%, #9d00ff 100%);
 }
 
 body {
-  background-color: #090d16;
-  color: #f3f4f6;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Custom scrollbars */
+/* Custom Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0d1322;
+  background: var(--bg-primary);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #24324d;
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 4px;
 }
 
@@ -34,42 +68,58 @@ body {
   background: #3b82f6;
 }
 
-/* Glassmorphism utilities */
+/* Glassmorphism Cards */
 .glass-panel {
-  background: rgba(17, 24, 39, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg-surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
 }
 
 .glass-card {
-  background: rgba(22, 31, 50, 0.85);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
 }
 
-/* Glowing borders & gradients */
+/* Glowing text & borders */
 .gradient-text {
-  background: linear-gradient(135deg, #60a5fa 0%, #22d3ee 50%, #a78bfa 100%);
+  background: var(--gradient-brand);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.gradient-border {
-  position: relative;
-  border-radius: 0.75rem;
+.glow-box {
+  box-shadow: 0 0 20px var(--accent-glow);
 }
 
-.gradient-border::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: 0.75rem;
-  padding: 1px;
-  background: linear-gradient(135deg, rgba(59,130,246,0.5), rgba(34,211,238,0.5));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
+/* Animations */
+@keyframes fadeInSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeInSlideUp 0.35s ease-out forwards;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px var(--accent-glow);
+  }
+  50% {
+    box-shadow: 0 0 30px var(--accent-glow);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2.5s infinite ease-in-out;
 }
