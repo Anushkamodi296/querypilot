@@ -1,3 +1,4 @@
+import type { Database as SqlJsDatabase } from 'sql.js';
 import path from 'path';
 import fs from 'fs';
 const initSqlJs = require('sql.js');
@@ -161,7 +162,7 @@ export async function getSchemaDDL(): Promise<string> {
   const db = await getDb();
   const res = db.exec("SELECT sql FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'");
   if (res.length === 0) return '';
-  return res[0].values.map(v => v[0] as string).join(';\n\n') + ';';
+  return res[0].values.map((v: any) => v[0] as string).join(';\n\n') + ';';
 }
 
 export interface TableSchemaInfo {
@@ -175,14 +176,14 @@ export async function getSchemaExplorerData(): Promise<TableSchemaInfo[]> {
   const res = db.exec("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'");
   if (res.length === 0) return [];
 
-  const tableNames = res[0].values.map(v => v[0] as string);
+  const tableNames = res[0].values.map((v: any) => v[0] as string);
   
-  return tableNames.map(tableName => {
+  return tableNames.map((tableName: string) => {
     const countRes = db.exec(`SELECT count(*) as count FROM "${tableName}"`);
     const rowCount = countRes.length > 0 && countRes[0].values.length > 0 ? (countRes[0].values[0][0] as number) : 0;
     
     const infoRes = db.exec(`PRAGMA table_info("${tableName}")`);
-    const columns = infoRes.length > 0 ? infoRes[0].values.map(row => ({
+    const columns = infoRes.length > 0 ? infoRes[0].values.map((row: any) => ({
       name: String(row[1]),
       type: String(row[2]),
       pk: Boolean(row[5]),
@@ -268,9 +269,9 @@ export async function executeQuery(sql: string): Promise<QueryExecutionResult> {
     const colNames = result[0].columns;
     const rawValues = result[0].values;
     
-    const rows = rawValues.map(rowVals => {
+    const rows = rawValues.map((rowVals: any) => {
       const obj: Record<string, any> = {};
-      colNames.forEach((col, i) => {
+      colNames.forEach((col: string, i: number) => {
         obj[col] = rowVals[i];
       });
       return obj;
