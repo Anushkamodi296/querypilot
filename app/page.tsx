@@ -1,27 +1,47 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Header, { ThemeMode } from '@/components/Header';
+import Header, { ThemeKey, THEME_OPTIONS } from '@/components/Header';
 import SchemaExplorer from '@/components/SchemaExplorer';
 import StageTracker from '@/components/StageTracker';
 import ClarificationModal from '@/components/ClarificationModal';
 import SqlViewer from '@/components/SqlViewer';
 import DataTable from '@/components/DataTable';
 import Toast, { ToastMessage } from '@/components/Toast';
-import { Send, Sparkles, RefreshCw, Database, ShieldAlert, Play, Trash2, Command, Code2, FlaskConical, Terminal } from 'lucide-react';
+import { Send, RefreshCw, Database, ShieldAlert, Play, Trash2, Command, Code2, FlaskConical, Terminal } from 'lucide-react';
 import { QueryApiResponse } from '@/app/api/query/route';
 
 export default function Dashboard() {
-  const [theme, setTheme] = useState<ThemeMode>('luxury');
+  const [theme, setTheme] = useState<ThemeKey>('luxury-data');
   const [prompt, setPrompt] = useState<string>('');
   const [activePrompt, setActivePrompt] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [response, setResponse] = useState<QueryApiResponse | null>(null);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
-  // Apply Theme CSS class to document root
+  // Load active theme selection from localStorage on mount & sync data-theme attribute
   useEffect(() => {
-    document.documentElement.className = `theme-${theme}`;
+    try {
+      const savedTheme = localStorage.getItem('querypilot_theme');
+      if (savedTheme && THEME_OPTIONS.some(t => t.key === savedTheme)) {
+        setTheme(savedTheme as ThemeKey);
+      }
+    } catch (e) {
+      console.warn('LocalStorage not accessible:', e);
+    }
+  }, []);
+
+  const handleThemeChange = (newTheme: ThemeKey) => {
+    setTheme(newTheme);
+    try {
+      localStorage.setItem('querypilot_theme', newTheme);
+    } catch (e) {
+      console.warn('Failed to save theme to localStorage', e);
+    }
+  };
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 
   // Toast Helper
@@ -114,15 +134,18 @@ export default function Dashboard() {
   };
 
   // Section Headers according to theme
+  const isResearch = theme === 'research-lab';
+  const isRetro = theme === 'retro-web';
+
   const titles = {
-    queryStudio: theme === 'research' ? 'QUERY LAB & EVALUATION' : theme === 'oldweb' ? 'HYPER-SQL TERMINAL v1.4' : 'PROMPT & QUERY STUDIO',
-    schemaTitle: theme === 'research' ? 'SCHEMA' : 'DATABASE SCHEMA',
-    experimentsTitle: theme === 'research' ? 'EXPERIMENTS & PIPELINE' : '4-STAGE EXECUTION PIPELINE',
-    resultsTitle: theme === 'research' ? 'RESULTS & DATA EVALUATION' : 'RESULTS DATA GRID'
+    queryStudio: isResearch ? 'QUERY LAB & EVALUATION' : isRetro ? 'HYPER-SQL TERMINAL v1.4' : 'PROMPT & QUERY STUDIO',
+    schemaTitle: isResearch ? 'SCHEMA' : 'DATABASE SCHEMA',
+    experimentsTitle: isResearch ? 'EXPERIMENTS & PIPELINE' : '4-STAGE EXECUTION PIPELINE',
+    resultsTitle: isResearch ? 'RESULTS & EVALUATION' : 'RESULTS DATA GRID'
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] flex flex-col font-sans transition-colors duration-300">
+    <div className="min-h-screen bg-[var(--bg-app)] text-[var(--text-primary)] flex flex-col font-sans transition-colors duration-300">
       {/* Toast Notification Container */}
       <Toast toasts={toasts} onDismiss={dismissToast} />
 
@@ -130,7 +153,7 @@ export default function Dashboard() {
       <Header
         onSelectSampleQuery={handleSelectSampleQuery}
         currentTheme={theme}
-        onThemeChange={setTheme}
+        onThemeChange={handleThemeChange}
       />
 
       {/* Main Two-Column Workspace Layout */}
@@ -147,26 +170,26 @@ export default function Dashboard() {
         {/* Right Pane: IDE Studio & Results Pane */}
         <main className="flex-1 p-4 lg:p-6 overflow-y-auto w-full">
           {/* Dynamic Hero Section */}
-          <div className="mb-5 animate-fade-in flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--bg-surface)] p-5 rounded-2xl border border-[var(--border-color)]">
+          <div className="mb-5 animate-fade-in flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--bg-card)] p-5 rounded-2xl border border-[var(--border-color)]">
             <div>
-              <div className="flex items-center space-x-2 text-xs font-bold font-mono text-[var(--accent-color)] mb-1 tracking-wider uppercase">
-                {theme === 'research' ? <FlaskConical className="w-4 h-4" /> : <Terminal className="w-4 h-4" />}
+              <div className="flex items-center space-x-2 text-xs font-bold font-mono text-[var(--accent)] mb-1 tracking-wider uppercase">
+                {isResearch ? <FlaskConical className="w-4 h-4" /> : <Terminal className="w-4 h-4" />}
                 <span>{titles.queryStudio}</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight font-['Outfit']">
-                {theme === 'research' ? 'Data Research & Query Lab 🧪' : 'Welcome back, Explorer 🚀'}
+                {isResearch ? 'Data Research & Query Lab 🧪' : 'Welcome back, Explorer 🚀'}
               </h2>
-              <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-1 opacity-90">
-                {theme === 'research' 
+              <p className="text-xs sm:text-sm text-[var(--text-primary)] opacity-80 mt-1">
+                {isResearch 
                   ? 'Evaluate complex schemas, run read-only analytical queries, and analyze performance.' 
                   : 'Master your data with lightning-fast in-browser SQL & 4-Stage AI Clarification.'}
               </p>
             </div>
 
-            {theme === 'oldweb' && (
-              <div className="flex flex-col text-right font-mono text-xs text-[#FF4D00]">
+            {isRetro && (
+              <div className="flex flex-col text-right font-mono text-xs text-[var(--accent)]">
                 <span className="font-bold">[STATUS: ONLINE]</span>
-                <span className="text-[10px] text-[#B8E7F5]">[BUILD: v1.4.2 PASSED]</span>
+                <span className="text-[10px] text-[var(--text-primary)] opacity-70">[BUILD: v1.4.2 PASSED]</span>
               </div>
             )}
           </div>
@@ -182,11 +205,11 @@ export default function Dashboard() {
                   <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
                 </div>
                 <span className="text-xs font-mono font-bold text-[var(--text-primary)] pl-2 border-l border-[var(--border-color)] flex items-center gap-1.5">
-                  <Code2 className="w-3.5 h-3.5 text-[var(--accent-color)]" /> Prompt Input / SQL Studio
+                  <Code2 className="w-3.5 h-3.5 text-[var(--accent)]" /> Prompt Input / SQL Studio
                 </span>
               </div>
 
-              <div className="text-[11px] font-mono text-[var(--text-secondary)] hidden sm:flex items-center gap-1">
+              <div className="text-[11px] font-mono text-[var(--text-primary)] opacity-70 hidden sm:flex items-center gap-1">
                 <Command className="w-3 h-3" /> <span>Press ⌘+Enter to Run</span>
               </div>
             </div>
@@ -199,7 +222,7 @@ export default function Dashboard() {
                 onKeyDown={handleKeyDown}
                 onChange={(e) => setPrompt(e.target.value)}
                 placeholder="Ask in natural language (e.g. 'Show top 5 highest spending users' or 'List products with stock under 50')..."
-                className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl p-4 text-sm text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none focus:border-[var(--accent-color)] focus:ring-1 focus:ring-[var(--accent-color)] font-mono transition resize-none"
+                className="w-full bg-[var(--bg-input)] border border-[var(--border-color)] rounded-xl p-4 text-sm text-[var(--text-primary)] placeholder-[var(--text-primary)] placeholder-opacity-50 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] font-mono transition resize-none"
               />
 
               {/* Quick Action Badges */}
@@ -208,28 +231,28 @@ export default function Dashboard() {
                   <button
                     type="button"
                     onClick={() => handleSelectSampleQuery('Show top 5 highest spending customers')}
-                    className="text-xs bg-[var(--bg-primary)] hover:bg-[var(--bg-hover)] text-[var(--accent-color)] px-3 py-1.5 rounded-xl border border-[var(--border-color)] transition flex items-center gap-1 font-semibold"
+                    className="text-xs bg-[var(--bg-input)] hover:border-[var(--accent)] text-[var(--accent)] px-3 py-1.5 rounded-xl border border-[var(--border-color)] transition flex items-center gap-1 font-semibold"
                   >
                     ⚡ Top 5 Customers
                   </button>
                   <button
                     type="button"
                     onClick={() => handleSelectSampleQuery('List all products with stock under 50 items')}
-                    className="text-xs bg-[var(--bg-primary)] hover:bg-[var(--bg-hover)] text-[var(--text-primary)] px-3 py-1.5 rounded-xl border border-[var(--border-color)] transition flex items-center gap-1 font-medium"
+                    className="text-xs bg-[var(--bg-input)] hover:border-[var(--accent)] text-[var(--text-primary)] px-3 py-1.5 rounded-xl border border-[var(--border-color)] transition flex items-center gap-1 font-medium"
                   >
                     📊 Low Stock Items
                   </button>
                   <button
                     type="button"
                     onClick={() => handleSelectSampleQuery('Show recent active sales')}
-                    className="text-xs bg-[var(--bg-primary)] hover:bg-[var(--bg-hover)] text-amber-400 px-3 py-1.5 rounded-xl border border-amber-500/30 transition flex items-center gap-1 font-medium"
+                    className="text-xs bg-[var(--bg-input)] hover:border-[var(--accent)] text-[var(--text-primary)] px-3 py-1.5 rounded-xl border border-[var(--border-color)] transition flex items-center gap-1 font-medium"
                   >
                     ❓ Ambiguous Demo
                   </button>
                   <button
                     type="button"
                     onClick={handleClearCanvas}
-                    className="text-xs bg-[var(--bg-primary)] hover:bg-[var(--bg-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] px-2.5 py-1.5 rounded-xl border border-[var(--border-color)] transition flex items-center gap-1"
+                    className="text-xs bg-[var(--bg-input)] hover:border-[var(--accent)] text-[var(--text-primary)] opacity-80 hover:opacity-100 px-2.5 py-1.5 rounded-xl border border-[var(--border-color)] transition flex items-center gap-1"
                     title="Clear Prompt & Results"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -241,7 +264,7 @@ export default function Dashboard() {
                 <button
                   type="submit"
                   disabled={loading || !prompt.trim()}
-                  className="px-6 py-2.5 rounded-xl font-bold text-xs bg-[var(--accent-color)] hover:opacity-90 text-[var(--bg-primary)] flex items-center space-x-2 shadow-lg disabled:opacity-50 transition duration-200 transform hover:-translate-y-0.5"
+                  className="px-6 py-2.5 rounded-xl font-bold text-xs bg-[var(--accent)] hover:opacity-90 text-[var(--bg-app)] flex items-center space-x-2 shadow-lg disabled:opacity-50 transition duration-200 transform hover:-translate-y-0.5"
                 >
                   {loading ? (
                     <>
@@ -287,7 +310,7 @@ export default function Dashboard() {
                   <h3 className="text-sm font-bold text-rose-300">Stage 3 Safety & Syntax Gate Rejected Query</h3>
                   <p className="text-xs text-rose-200/90 mt-1 font-mono">{response.error || 'Query failed safety check or syntax validation.'}</p>
                   {response.generated_sql && (
-                    <div className="mt-3 bg-[var(--bg-primary)] p-3 rounded-xl border border-rose-500/20 font-mono text-xs text-rose-300 overflow-x-auto">
+                    <div className="mt-3 bg-[var(--bg-input)] p-3 rounded-xl border border-rose-500/20 font-mono text-xs text-rose-300 overflow-x-auto">
                       {response.generated_sql}
                     </div>
                   )}
@@ -324,9 +347,9 @@ export default function Dashboard() {
           {/* Empty State On Launch */}
           {!response && !loading && (
             <div className="glass-card rounded-2xl p-12 text-center my-6 border border-dashed border-[var(--border-color)]">
-              <Database className="w-12 h-12 text-[var(--accent-color)] mx-auto mb-3 opacity-50 animate-pulse" />
+              <Database className="w-12 h-12 text-[var(--accent)] mx-auto mb-3 opacity-50 animate-pulse" />
               <h3 className="text-sm font-semibold text-[var(--text-primary)]">Ready to Pilot Your Database</h3>
-              <p className="text-xs text-[var(--text-secondary)] max-w-md mx-auto mt-1">
+              <p className="text-xs text-[var(--text-primary)] opacity-70 max-w-md mx-auto mt-1">
                 Enter a question above or click a sample prompt badge to start the 4-Stage Ambiguity Detection, Clarification, & Execution Pipeline.
               </p>
             </div>

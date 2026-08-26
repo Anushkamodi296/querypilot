@@ -4,55 +4,101 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 🟣 Luxury Data (Default) */
-:root, .theme-luxury {
-  --bg-primary: #160B0D;
-  --bg-surface: #381018;
-  --bg-card: #5B1725;
-  --bg-hover: #752031;
-  --border-color: rgba(233, 160, 168, 0.25);
-  --text-primary: #F4E8E4;
-  --text-secondary: #E9A0A8;
-  --accent-color: #E9A0A8;
-  --accent-glow: rgba(233, 160, 168, 0.4);
-  --gradient-brand: linear-gradient(135deg, #E9A0A8 0%, #D4737D 50%, #B84252 100%);
-  --font-family: 'Inter', sans-serif;
+/* Default Fallback CSS Variables */
+:root {
+  --bg-app: #170a0e;
+  --bg-card: #33141d;
+  --bg-input: #1f0d13;
+  --border-color: #592031;
+  --accent: #e05370;
+  --text-primary: #fce7f3;
+  --font-sans: 'Inter', sans-serif;
 }
 
-/* 🟢 Research Lab (Forest Green + Bone) */
-.theme-research {
-  --bg-primary: #10231C;
-  --bg-surface: #183127;
-  --bg-card: #203B2D;
-  --bg-hover: #2B4C3B;
-  --border-color: rgba(200, 169, 107, 0.3);
-  --text-primary: #E8E3D4;
-  --text-secondary: #C8A96B;
-  --accent-color: #C8A96B;
-  --accent-glow: rgba(200, 169, 107, 0.35);
-  --gradient-brand: linear-gradient(135deg, #C8A96B 0%, #DFCA9B 50%, #9D7F43 100%);
-  --font-family: 'Playfair Display', Georgia, serif;
+/* Theme 1: Luxury Data */
+[data-theme="luxury-data"] {
+  --bg-app: #170a0e;
+  --bg-card: #33141d;
+  --bg-input: #1f0d13;
+  --border-color: #592031;
+  --accent: #e05370;
+  --text-primary: #fce7f3;
 }
 
-/* 🩵 Old Web / New Web (Sky Blue + Dark + Orange) */
-.theme-oldweb {
-  --bg-primary: #050505;
-  --bg-surface: #0e121a;
-  --bg-card: #151c28;
-  --bg-hover: #1e283a;
-  --border-color: #B8E7F5;
-  --text-primary: #FFFFFF;
-  --text-secondary: #B8E7F5;
-  --accent-color: #FF4D00;
-  --accent-glow: rgba(255, 77, 0, 0.5);
-  --gradient-brand: linear-gradient(135deg, #FF4D00 0%, #B8E7F5 100%);
-  --font-family: 'JetBrains Mono', monospace;
+/* Theme 2: Research Lab */
+[data-theme="research-lab"] {
+  --bg-app: #0b1c15;
+  --bg-card: #122e23;
+  --bg-input: #08140f;
+  --border-color: #1b4737;
+  --accent: #87d8a2;
+  --text-primary: #e6f4ed;
+}
+
+/* Theme 3: Retro Web */
+[data-theme="retro-web"] {
+  --bg-app: #090d14;
+  --bg-card: #111927;
+  --bg-input: #06090e;
+  --border-color: #1e293b;
+  --accent: #f86734;
+  --text-primary: #f1f5f9;
+}
+
+/* Theme 4: Pitch Dark */
+[data-theme="pitch-dark"] {
+  --bg-app: #09090b;
+  --bg-card: #18181b;
+  --bg-input: #000000;
+  --border-color: #27272a;
+  --accent: #38bdf8;
+  --text-primary: #fafafa;
+}
+
+/* Theme 5: Clean Light */
+[data-theme="clean-light"] {
+  --bg-app: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-input: #f1f5f9;
+  --border-color: #e2e8f0;
+  --accent: #2563eb;
+  --text-primary: #0f172a;
+}
+
+/* Theme 6: Soft Blush */
+[data-theme="soft-blush"] {
+  --bg-app: #fdf2f4;
+  --bg-card: #ffffff;
+  --bg-input: #fce7f3;
+  --border-color: #fbcfe8;
+  --accent: #be185d;
+  --text-primary: #831843;
+}
+
+/* Theme 7: Soft Mint */
+[data-theme="soft-mint"] {
+  --bg-app: #f0fdf4;
+  --bg-card: #ffffff;
+  --bg-input: #dcfce7;
+  --border-color: #bbf7d0;
+  --accent: #059669;
+  --text-primary: #064e3b;
+}
+
+/* Theme 8: Soft Peach */
+[data-theme="soft-peach"] {
+  --bg-app: #fff7ed;
+  --bg-card: #ffffff;
+  --bg-input: #ffedd5;
+  --border-color: #fed7aa;
+  --accent: #ea580c;
+  --text-primary: #7c2d12;
 }
 
 body {
-  background-color: var(--bg-primary);
+  background-color: var(--bg-app);
   color: var(--text-primary);
-  font-family: var(--font-family);
+  font-family: var(--font-sans);
   overflow-x: hidden;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -64,7 +110,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-primary);
+  background: var(--bg-app);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -73,14 +119,14 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-color);
+  background: var(--accent);
 }
 
-/* Glassmorphism & UI Panels */
+/* UI Panel Helpers */
 .glass-panel {
-  background: var(--bg-surface);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border-color);
 }
 
@@ -89,17 +135,11 @@ body {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border-color);
-  box-shadow: 0 12px 36px -12px rgba(0, 0, 0, 0.6);
-}
-
-.gradient-text {
-  background: var(--gradient-brand);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.25);
 }
 
 .glow-box {
-  box-shadow: 0 0 24px var(--accent-glow);
+  box-shadow: 0 0 20px rgba(224, 83, 112, 0.25);
 }
 
 /* Hide Netlify Overlay Badges & Drawers Completely */
@@ -119,7 +159,7 @@ iframe[title*="Netlify"],
 @keyframes fadeInSlideUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -128,5 +168,5 @@ iframe[title*="Netlify"],
 }
 
 .animate-fade-in {
-  animation: fadeInSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeInSlideUp 0.3s ease-out forwards;
 }

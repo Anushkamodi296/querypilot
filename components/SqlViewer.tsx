@@ -42,12 +42,12 @@ export default function SqlViewer({
   return (
     <div className="glass-card rounded-2xl overflow-hidden mb-6 shadow-2xl transition-all duration-300">
       {/* Viewer Header Toolbar */}
-      <div className="bg-surface px-4 py-3 border-b border-white/10 flex flex-wrap items-center justify-between gap-2">
+      <div className="bg-[var(--bg-card)] px-4 py-3 border-b border-[var(--border-color)] flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center space-x-2">
-          <Code className="w-4 h-4 text-cyan-400" />
-          <span className="text-xs font-bold uppercase tracking-wider font-mono">Generated SQL Query</span>
+          <Code className="w-4 h-4 text-[var(--accent)]" />
+          <span className="text-xs font-bold uppercase tracking-wider font-mono text-[var(--text-primary)]">Generated SQL Query</span>
           {retriesAttempted && retriesAttempted > 0 ? (
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/30 flex items-center gap-1 font-mono">
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/30 flex items-center gap-1 font-mono">
               <RefreshCw className="w-3 h-3 animate-spin" /> Auto-Corrected ({retriesAttempted} retry)
             </span>
           ) : null}
@@ -57,13 +57,13 @@ export default function SqlViewer({
         <div className="flex items-center space-x-2 sm:space-x-3 text-xs font-mono">
           {execution && (
             <>
-              <div className="flex items-center space-x-1 text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
+              <div className="flex items-center space-x-1 text-[var(--accent)] bg-[var(--bg-input)] px-2.5 py-1 rounded-lg border border-[var(--border-color)]">
                 <Clock className="w-3.5 h-3.5" />
                 <span>{execution.latencyMs}ms</span>
               </div>
 
-              <div className="flex items-center space-x-1 text-blue-400 bg-blue-500/10 px-2.5 py-1 rounded-lg border border-blue-500/20">
-                <Layers className="w-3.5 h-3.5" />
+              <div className="flex items-center space-x-1 text-[var(--text-primary)] bg-[var(--bg-input)] px-2.5 py-1 rounded-lg border border-[var(--border-color)]">
+                <Layers className="w-3.5 h-3.5 text-[var(--accent)]" />
                 <span>{execution.rowCount} rows</span>
               </div>
             </>
@@ -72,17 +72,17 @@ export default function SqlViewer({
           {/* Copy SQL Button */}
           <button
             onClick={handleCopySql}
-            className="flex items-center space-x-1.5 bg-surface hover:bg-white/10 text-gray-200 px-3 py-1 rounded-lg border border-white/10 transition duration-150 text-xs font-sans"
+            className="flex items-center space-x-1.5 bg-[var(--bg-input)] hover:border-[var(--accent)] text-[var(--text-primary)] px-3 py-1 rounded-lg border border-[var(--border-color)] transition duration-150 text-xs font-sans font-medium"
             title="Copy SQL to Clipboard"
           >
             {copiedSql ? (
               <>
-                <Check className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="text-emerald-400">Copied SQL!</span>
+                <Check className="w-3.5 h-3.5 text-emerald-500" />
+                <span className="text-emerald-500">Copied SQL!</span>
               </>
             ) : (
               <>
-                <Copy className="w-3.5 h-3.5 text-gray-400" />
+                <Copy className="w-3.5 h-3.5 text-[var(--text-primary)] opacity-70" />
                 <span>Copy SQL</span>
               </>
             )}
@@ -92,17 +92,17 @@ export default function SqlViewer({
           {execution && execution.rows.length > 0 && (
             <button
               onClick={handleCopyJson}
-              className="hidden sm:flex items-center space-x-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-3 py-1 rounded-lg transition text-xs font-sans"
+              className="hidden sm:flex items-center space-x-1.5 bg-[var(--accent)] text-[var(--bg-app)] font-bold px-3 py-1 rounded-lg transition text-xs font-sans shadow"
               title="Copy Query Results as JSON"
             >
               {copiedJson ? (
                 <>
-                  <Check className="w-3.5 h-3.5 text-cyan-400" />
-                  <span className="text-cyan-400">Copied JSON!</span>
+                  <Check className="w-3.5 h-3.5" />
+                  <span>Copied JSON!</span>
                 </>
               ) : (
                 <>
-                  <FileCode className="w-3.5 h-3.5 text-cyan-400" />
+                  <FileCode className="w-3.5 h-3.5" />
                   <span>Copy JSON</span>
                 </>
               )}
@@ -112,15 +112,15 @@ export default function SqlViewer({
       </div>
 
       {/* SQL Code Terminal */}
-      <div className="p-4 bg-[#050811] font-mono text-xs overflow-x-auto">
+      <div className="p-4 bg-[var(--bg-input)] font-mono text-xs overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <tbody>
             {sqlLines.map((line, idx) => (
-              <tr key={idx} className="hover:bg-white/5 transition-colors">
-                <td className="w-8 select-none text-gray-600 text-right pr-4 py-0.5 align-top">
+              <tr key={idx} className="hover:bg-[var(--bg-card)] transition-colors">
+                <td className="w-8 select-none text-[var(--text-primary)] opacity-40 text-right pr-4 py-0.5 align-top">
                   {idx + 1}
                 </td>
-                <td className="py-0.5 text-blue-300 whitespace-pre">
+                <td className="py-0.5 text-[var(--text-primary)] whitespace-pre">
                   {highlightSqlKeywords(line)}
                 </td>
               </tr>
@@ -131,10 +131,10 @@ export default function SqlViewer({
 
       {/* Explanation Footer */}
       {explanation && (
-        <div className="bg-surface/60 px-4 py-2.5 border-t border-white/10 text-xs text-gray-300 flex items-start space-x-2">
-          <Info className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
+        <div className="bg-[var(--bg-card)] px-4 py-2.5 border-t border-[var(--border-color)] text-xs text-[var(--text-primary)] flex items-start space-x-2">
+          <Info className="w-4 h-4 text-[var(--accent)] flex-shrink-0 mt-0.5" />
           <div>
-            <span className="font-semibold text-white">Query Logic & Intent: </span>
+            <span className="font-bold text-[var(--text-primary)]">Query Logic & Intent: </span>
             <span className="opacity-90">{explanation}</span>
           </div>
         </div>
@@ -157,7 +157,7 @@ function highlightSqlKeywords(line: string) {
   return parts.map((part, i) => {
     if (part.startsWith('___KW_') && part.endsWith('___')) {
       const kw = part.replace('___KW_', '').replace('___', '');
-      return <span key={i} className="text-cyan-400 font-bold">{kw}</span>;
+      return <span key={i} className="text-[var(--accent)] font-bold">{kw}</span>;
     }
     return <span key={i}>{part}</span>;
   });
