@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Terminal, Cpu, CheckCircle2, Palette, ChevronDown } from 'lucide-react';
+import React, { useState } from 'react';
+import { Terminal, Cpu, CheckCircle2, Palette, ChevronDown, Settings, Sparkles } from 'lucide-react';
 
 export type ThemeKey = 
   | 'luxury-data' 
@@ -35,17 +35,18 @@ interface HeaderProps {
   onSelectSampleQuery: (query: string) => void;
   currentTheme: ThemeKey;
   onThemeChange: (theme: ThemeKey) => void;
+  onOpenSettings: () => void;
+  activeProviderName: string;
 }
 
-export default function Header({ onSelectSampleQuery, currentTheme, onThemeChange }: HeaderProps) {
-  const [ollamaConnected, setOllamaConnected] = useState<boolean | null>(null);
+export default function Header({
+  onSelectSampleQuery,
+  currentTheme,
+  onThemeChange,
+  onOpenSettings,
+  activeProviderName
+}: HeaderProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
-  useEffect(() => {
-    fetch('http://localhost:11434/api/tags', { method: 'GET', signal: AbortSignal.timeout(2000) })
-      .then(res => setOllamaConnected(res.ok))
-      .catch(() => setOllamaConnected(false));
-  }, []);
 
   const activeOption = THEME_OPTIONS.find(t => t.key === currentTheme) || THEME_OPTIONS[0];
 
@@ -68,28 +69,36 @@ export default function Header({ onSelectSampleQuery, currentTheme, onThemeChang
                 </span>
               ) : (
                 <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[var(--border-color)] text-[var(--text-primary)] opacity-80">
-                  8 THEMES ACTIVE
+                  AI SUITE READY
                 </span>
               )}
             </div>
             <p className="text-xs text-[var(--text-primary)] opacity-70">
               {currentTheme === 'research-lab' 
                 ? 'Academic Data Evaluation & Schema Experimentation Platform' 
-                : 'Production AI Text-to-SQL Engine with 4-Stage Guard'}
+                : 'Production AI Text-to-SQL Engine with Explainer & Optimizer'}
             </p>
           </div>
         </div>
 
-        {/* Status Badges & 8-Theme Dropdown Selector */}
+        {/* Status Badges, Settings Gear & Theme Selector */}
         <div className="flex flex-wrap items-center gap-3">
-          {/* Connection Status */}
+          {/* Connection / AI Status */}
           <div className="flex items-center space-x-2 text-xs px-3 py-1.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-input)] font-mono text-[var(--text-primary)]">
-            <Cpu className="w-3.5 h-3.5 text-[var(--accent)]" />
-            <span>
-              {ollamaConnected === true ? 'Ollama Active (llama3)' : 'In-Browser SQL Engine'}
-            </span>
-            <CheckCircle2 className="w-3.5 h-3.5 text-[var(--accent)]" />
+            <Sparkles className="w-3.5 h-3.5 text-[var(--accent)] animate-pulse" />
+            <span className="font-semibold">{activeProviderName}</span>
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
           </div>
+
+          {/* Settings Modal Gear Icon */}
+          <button
+            onClick={onOpenSettings}
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-color)] text-xs font-semibold text-[var(--text-primary)] hover:border-[var(--accent)] transition duration-200"
+            title="Configure AI Engine Providers & API Keys"
+          >
+            <Settings className="w-4 h-4 text-[var(--accent)]" />
+            <span className="hidden sm:inline">Settings</span>
+          </button>
 
           {/* Theme Selector Dropdown Menu */}
           <div className="relative">
